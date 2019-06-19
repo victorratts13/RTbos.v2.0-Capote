@@ -1,0 +1,56 @@
+{
+  "name": "rtbos",
+  "version": "1.0.0",
+  "description": "Real Trade Bot Open Souuce (RTbos) javascript",
+  "main": "RTbos.js",
+  "scripts": {
+    "start": "concurrently \"node app.js\" \"node index.js\"",
+    "test": "node RTbos.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/victorratts13/RTbos.git"
+  },
+  "keywords": [
+    "BTC",
+    "POLONIEX",
+    "LTC",
+    "XMR",
+    "bot",
+    "trade",
+    "trader",
+    "tradingbot",
+    "daytrade",
+    "exchange",
+    "bitrex",
+    "BTCbolsa",
+    "mercado",
+    "bitcoin",
+    "brazil",
+    "brasil",
+    "criptocurrencies",
+    "Crypto",
+    "Alticoins",
+    "Cambio",
+    "Bitcoin",
+    "Litecoin",
+    "Dogecoin",
+    "Etherum"
+  ],
+  "author": "Victor Ratts",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/victorratts13/RTbos/issues"
+  },
+  "homepage": "https://github.com/victorratts13/RTbos#readme",
+  "dependencies": {
+    "bitcoin-chart-cli": "^3.3.0",
+    "clear-module": "^3.2.0",
+    "concurrently": "^4.1.0",
+    "express": "^4.17.1",
+    "poloniex-api-node": "^2.0.1",
+    "request": "^2.88.0",
+    "socket.io": "^2.2.0",
+    "technicalindicators": "^1.1.13"
+  }
+}
