@@ -19,7 +19,7 @@ const SMA = require('technicalindicators').SMA;
 
 const par = 'USDT_BTC'; //ultilise o formato PAIR_PAIR ex. BTC_LTC, BTC_DOGE, USDT_BTC
 const uTime = parseInt(new Date().getTime() / 1000);//TimeUnix format
-const sub = 14550;//subtração do startTime
+const sub = 225550;//subtração do startTime
 const period = 300; //valor do periodo dos candels em segundos (minimo 300 segundos ou 5 minutos)
 const start = uTime - sub;//inicio do candle
 const end = uTime;//fim do candle
@@ -32,12 +32,13 @@ const lucro = api.lucro; //porcentagem de lucro, caso esteja vazio o lucro esper
 //##################################################################################################################
 
 setInterval(() => {
+    console.log('\033c Bem vindo ao RTbos v2.0 (capote)')
     clearModule('./var/tempFile')
     const tempFile = require('./var/tempFile')
     if(api.invest == false){
         var link = api.local;
         request({
-            url: link+`/history?symbol=${par}&resolution=1&from=${start}&to=${end}`,
+            url: link+`/history?symbol=${par}&resolution=300&from=${start}&to=${end}`,
             json: true
         }, (err, response, body) => {
             var renkoBrick = body;
@@ -54,9 +55,13 @@ setInterval(() => {
                             }else{
                                 ma1 = SMA.calculate({period: api.ma1, values: renkoBrick.c})
                                 ma2 = SMA.calculate({period: api.ma2, values: renkoBrick.c})
-
+                                //console.log(ma1)
+                                //console.log(renkoBrick.c)
                                 var Ma01_val = ma1.slice(-1)[0];
                                 var Ma02_val = ma2.slice(-1)[0];
+
+                                console.log('Media Movel: '+api.ma1+' -> '+Ma01_val);
+                                console.log('Media Movel: '+api.ma2+' -> '+Ma02_val);
 //====================================== cruzamento de medias em renko ============================================
                                 function cross(){//cross function 
                                     if(Ma01_val > Ma02_val){
@@ -94,35 +99,35 @@ setInterval(() => {
 //======================================= execução das ordens ========================================================
                                 if(cross() == 1){
                                     if(tempFile.type == 'sell'){
-                                        console.log('\033c executando compra');
+                                        console.log('executando compra');
                                         buy();
                                         var createTemp = "var lastOrder = {type: 'buy'}; module.exports = lastOrder;"
                                         fs.writeFile('./var/tempFile.js', createTemp, (err) => {
                                             if(err){
                                                 console.log(err)
                                             }else{
-                                                console.log('\033c  criado arquivo temporario -> Buy')
+                                                console.log('criado arquivo temporario -> Buy')
                                             }
                                         })
                                     }else{
-                                        console.log('\033c  compra executada, aguardando venda')
+                                        console.log('compra executada, aguardando venda')
                                     }
 
                                 }
                                 if(cross() == 2){
                                     if(tempFile == 'buy'){
                                         var createTemp = "var lastOrder = {type: 'sell'}; module.exports = lastOrder;"
-                                        console.log('\033c  executando venda');
+                                        console.log('executando venda');
                                         sell()
                                         fs.writeFile('./var/tempFile.js', createTemp, (err) => {
                                             if(err){
                                                 console.log(err)
                                             }else{
-                                                console.log('\033c  criado arquivo temporario -> Sell')
+                                                console.log('criado arquivo temporario -> Sell')
                                             }
                                         })
                                     }else{
-                                        console.log('\033c  venda executada, aguardando compra')                                        
+                                        console.log('venda executada, aguardando compra')                                        
                                     }
                                 }                                                                                               
                             }
