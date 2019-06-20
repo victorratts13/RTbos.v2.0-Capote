@@ -92,7 +92,7 @@ setInterval(() => {
                                     var price = data[0].close;
                                     var rate = parseInt(data[0].close);
                                     var buyVal = (balance.USDT / lowesk);
-                                    var sellVal = (price * balance.BTC / price);
+                                    var sellVal = (highest * balance.BTC / highest);
                                     var USDT_buy = parseInt(buyVal);
                                     console.log('Preço -> '+price);
                                     console.log('rate -> '+rate)
@@ -140,7 +140,7 @@ setInterval(() => {
 
                                     }
                                     if(cross() == 2){
-                                        if(tempFile == 'buy'){
+                                        if(tempFile.type == 'buy'){
                                             var createTemp = "var lastOrder = {type: 'sell'}; module.exports = lastOrder;"
                                             console.log('executando venda');
                                             sell()
