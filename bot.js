@@ -111,7 +111,7 @@ setInterval(() => {
                                     }
 
                                     function sell(){
-                                        poloniex.sell(par, rate, sellVal, 1, 0, 0, (err, response) => {
+                                        poloniex.sell(par, rate, sellVal, 1, 1, 0, (err, response) => {
                                             if(err){
                                                 console.log('algum erro ocorreu na venda -> '+err)
                                             }else{
