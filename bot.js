@@ -5,7 +5,7 @@ const Poloniex = require('poloniex-api-node');
 const request = require('request');
 const fs = require('fs');
 const clearModule = require('clear-module');
-
+var cont = 0;
 const apiKey = api.apiKey;
 const secret = api.apiSecret;
 
@@ -13,6 +13,7 @@ const poloniex = new Poloniex(apiKey, secret, { nonce: () => new Date().getTime(
 
 const SMA = require('technicalindicators').SMA;
 
+setInterval(() => {
 //#################################################################################################################
 //################################################## definições basicas ###########################################
 //#################################################################################################################
@@ -23,7 +24,6 @@ const sub = 225550;//subtração do startTime
 const period = 300; //valor do periodo dos candels em segundos (minimo 300 segundos ou 5 minutos)
 const start = uTime - sub;//inicio do candle
 const end = uTime;//fim do candle
-var cont = 0;
 
 const invest = api.invest; //valor a ser investido, caso esteja vazio o valor será seu saldo total - minimo 0.0001
 const lucro = api.lucro; //porcentagem de lucro, caso esteja vazio o lucro esperado será maximo
@@ -32,8 +32,9 @@ const lucro = api.lucro; //porcentagem de lucro, caso esteja vazio o lucro esper
 //################################################### inicio do Robô ###############################################
 //##################################################################################################################
 
-setInterval(() => {
+
     console.log('\033c Bem vindo ao RTbos v2.0 (capote) '+ cont++)
+    console.log('\n TimeStamp -> '+uTime+'\n');
     poloniex.returnTicker((err, ticker) => {
         var lowesk = ticker.USDT_BTC.lowestAsk;
         var highest = ticker.USDT_BTC.highestBid;
@@ -119,8 +120,6 @@ setInterval(() => {
                                             }
                                         })
                                     }
-
-                                    
 //======================================= execução das ordens ========================================================
                                     if(cross() == 1){
                                         if(tempFile.type == 'sell'){
