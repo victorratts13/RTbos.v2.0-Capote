@@ -9,7 +9,7 @@ const clearModule = require('clear-module');
 const apiKey = api.apiKey;
 const secret = api.apiSecret;
 
-const poloniex = new Poloniex(apiKey, secret, { nonce: () => new Date().getTime() * 2005 }, {socketTimeout: 60000});
+const poloniex = new Poloniex(apiKey, secret, { nonce: () => new Date().getTime() * 2055 }, {socketTimeout: 60000});
 
 const SMA = require('technicalindicators').SMA;
 
@@ -23,6 +23,7 @@ const sub = 225550;//subtração do startTime
 const period = 300; //valor do periodo dos candels em segundos (minimo 300 segundos ou 5 minutos)
 const start = uTime - sub;//inicio do candle
 const end = uTime;//fim do candle
+var cont = 0;
 
 const invest = api.invest; //valor a ser investido, caso esteja vazio o valor será seu saldo total - minimo 0.0001
 const lucro = api.lucro; //porcentagem de lucro, caso esteja vazio o lucro esperado será maximo
@@ -32,7 +33,7 @@ const lucro = api.lucro; //porcentagem de lucro, caso esteja vazio o lucro esper
 //##################################################################################################################
 
 setInterval(() => {
-    console.log('\033c Bem vindo ao RTbos v2.0 (capote)')
+    console.log('\033c Bem vindo ao RTbos v2.0 (capote) '+ cont++)
     clearModule('./var/tempFile')
     const tempFile = require('./var/tempFile')
     if(api.invest == false){
@@ -59,7 +60,8 @@ setInterval(() => {
                                 //console.log(renkoBrick.c)
                                 var Ma01_val = ma1.slice(-1)[0];
                                 var Ma02_val = ma2.slice(-1)[0];
-
+                                console.log('BTC saldo -> '+balance.BTC )
+                                console.log('USDT saldo -> '+balance.USDT )
                                 console.log('Media Movel: '+api.ma1+' -> '+Ma01_val);
                                 console.log('Media Movel: '+api.ma2+' -> '+Ma02_val);
 //====================================== cruzamento de medias em renko ============================================
@@ -74,23 +76,28 @@ setInterval(() => {
                                 }
 //======================================= base de referencia ========================================================
                                 var price = Ma01_val;
-                                var buyVal = balance.USDT / price;
-                                var sellVal = price * balance.BTC;
-
+                                var buyVal = (price * balance.USDT / price);
+                                var sellVal = (price * balance.BTC / price);
+                                var USDT_buy = parseInt(buyVal);
+                                console.log('Preço -> '+price);
+                                console.log('valor de compra -> '+buyVal);
+                                console.log('valor de venda -> '+sellVal);
+                                console.log('USDT valor int ->'+USDT_buy)
 //======================================= funções de compra / venda =================================================
                                 function buy(){
                                     poloniex.buy(par, price, buyVal, 1, 0, 0, (err, response) => {
                                         if(err){
-                                            console.log(err)
+                                            console.log('algum erro ocorreu -> '+err)
                                         }else{
                                             console.log(JSON.stringify(response))        
                                         }
                                     })
                                 }
+
                                 function sell(){
-                                    poloniex.sell(par, price, sellVal, (err, response) => {
+                                    poloniex.sell(par, price, sellVal, 1, 0, 0, (err, response) => {
                                         if(err){
-                                            console.log(err)
+                                            console.log('algum erro ocorreu -> '+err)
                                         }else{
                                             console.log(response)
                                         }
