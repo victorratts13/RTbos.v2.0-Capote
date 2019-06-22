@@ -17,7 +17,7 @@ setInterval(() => {
 //#################################################################################################################
 //################################################## definições basicas ###########################################
 //#################################################################################################################
-
+const dataTime = new Date();
 const par = 'USDT_BTC'; //ultilise o formato PAIR_PAIR ex. BTC_LTC, BTC_DOGE, USDT_BTC
 const uTime = parseInt(new Date().getTime() / 1000);//TimeUnix format
 const sub = 225550;//subtração do startTime
@@ -102,21 +102,95 @@ const lucro = api.lucro; //porcentagem de lucro, caso esteja vazio o lucro esper
                                     console.log('USDT valor int ->'+USDT_buy)
 //======================================= funções de compra / venda =================================================
                                     function buy(){
-                                        poloniex.buy(par, rate, buyVal, 1, 0, 0, (err, response) => {
+                                        poloniex.buy(par, price, buyVal, 1, 1, 0, (err, response) => {
                                             if(err){
                                                 console.log('algum erro ocorreu na compra -> '+err)
+                                                console.log('alternando configuraçoes de entrada...')
+                                                var errLog = `
+                                                    data/hora: ${dataTime},
+                                                    error: ${err},
+                                                    type: compra
+                                                    console: erro de compra (fillOrKill)
+                                                `
+                                                fs.writeFile(`./var/console${cont}.error`, errLog, (err) => {
+                                                    if(err){
+                                                    console.log('erro ao criar arquivo de log -> '+err)
+                                                    }else{
+                                                        console.log('criando log de erros')
+                                                    }
+                                                })
+                                                poloniex.buy(par, price, buyVal, 1, 0, 0, (err, response) => {
+                                                    if(err){
+                                                        console.log('impossivel efetuar compra')
+                                                    }else{
+                                                        console.log(JSON.stringify(response))
+                                                        var createTemp = "var lastOrder = {type: 'buy'}; module.exports = lastOrder;"
+                                                            fs.writeFile('./var/tempFile.js', createTemp, (err) => {
+                                                            if(err){
+                                                                console.log(err)
+                                                            }else{
+                                                                console.log('criado arquivo temporario -> Buy')
+                                                            }
+                                                        })        
+                                                    }
+                                                })
                                             }else{
-                                                console.log(JSON.stringify(response))        
+                                                console.log(JSON.stringify(response))
+                                                var createTemp = "var lastOrder = {type: 'buy'}; module.exports = lastOrder;"
+                                                    fs.writeFile('./var/tempFile.js', createTemp, (err) => {
+                                                    if(err){
+                                                        console.log(err)
+                                                    }else{
+                                                        console.log('criado arquivo temporario -> Buy')
+                                                    }
+                                                })        
                                             }
                                         })
                                     }
 
                                     function sell(){
-                                        poloniex.sell(par, rate, sellVal, 1, 1, 0, (err, response) => {
+                                        poloniex.sell(par, price, sellVal, 1, 1, 0, (err, response) => {
                                             if(err){
                                                 console.log('algum erro ocorreu na venda -> '+err)
+                                                console.log('alternando configuraçoes de entrada...')
+                                                var errLog = `
+                                                    data/hora: ${dataTime},
+                                                    error: ${err},
+                                                    type: venda
+                                                    console: erro de compra (fillOrKill)
+                                                `
+                                                fs.writeFile(`./var/console${cont}.error`, errLog, (err) => {
+                                                    if(err){
+                                                    console.log('erro ao criar arquivo de log -> '+err)
+                                                    }else{
+                                                        console.log('criando log de erros')
+                                                    }
+                                                })
+                                                poloniex.sell(par, price, buyVal, 1, 0, 0, (err, response) => {
+                                                    if(err){
+                                                        console.log('impossivel efetuar venda')
+                                                    }else{
+                                                        console.log(JSON.stringify(response))
+                                                        var createTemp = "var lastOrder = {type: 'sell'}; module.exports = lastOrder;"
+                                                            fs.writeFile('./var/tempFile.js', createTemp, (err) => {
+                                                            if(err){
+                                                                console.log(err)
+                                                            }else{
+                                                                console.log('criado arquivo temporario -> Sell')
+                                                            }
+                                                        })      
+                                                    }
+                                                })
                                             }else{
-                                                console.log(response)
+                                                console.log(JSON.stringify(response))
+                                                var createTemp = "var lastOrder = {type: 'sell'}; module.exports = lastOrder;"
+                                                    fs.writeFile('./var/tempFile.js', createTemp, (err) => {
+                                                    if(err){
+                                                        console.log(err)
+                                                    }else{
+                                                        console.log('criado arquivo temporario -> Sell')
+                                                    }
+                                                })
                                             }
                                         })
                                     }
@@ -125,14 +199,6 @@ const lucro = api.lucro; //porcentagem de lucro, caso esteja vazio o lucro esper
                                         if(tempFile.type == 'sell'){
                                             console.log('executando compra');
                                             buy();
-                                            var createTemp = "var lastOrder = {type: 'buy'}; module.exports = lastOrder;"
-                                            fs.writeFile('./var/tempFile.js', createTemp, (err) => {
-                                                if(err){
-                                                    console.log(err)
-                                                }else{
-                                                    console.log('criado arquivo temporario -> Buy')
-                                                }
-                                            })
                                         }else{
                                             console.log('compra executada, aguardando venda')
                                         }
@@ -140,16 +206,8 @@ const lucro = api.lucro; //porcentagem de lucro, caso esteja vazio o lucro esper
                                     }
                                     if(cross() == 2){
                                         if(tempFile.type == 'buy'){
-                                            var createTemp = "var lastOrder = {type: 'sell'}; module.exports = lastOrder;"
                                             console.log('executando venda');
-                                            sell()
-                                            fs.writeFile('./var/tempFile.js', createTemp, (err) => {
-                                                if(err){
-                                                    console.log(err)
-                                                }else{
-                                                    console.log('criado arquivo temporario -> Sell')
-                                                }
-                                            })
+                                            sell();
                                         }else{
                                             console.log('venda executada, aguardando compra')                                        
                                         }
