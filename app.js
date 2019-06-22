@@ -37,12 +37,12 @@ app.get('/history', (req, res) => {
                     //t = parseInt(t);
                     for(x = 0; x < body.length; x++){
                         
-                        o += parseInt(body[x].open)+', ';
-                        c += parseInt(body[x].close)+', ';
-                        v += parseInt(body[x].volume)+', ';
-                        h += parseInt(body[x].high)+', ';
-                        l += parseInt(body[x].low)+', ';
-                        t += parseInt(body[x].date)+', ';
+                        o += (body[x].open)+', ';
+                        c += (body[x].close)+', ';
+                        v += (body[x].volume)+', ';
+                        h += (body[x].high)+', ';
+                        l += (body[x].low)+', ';
+                        t += (body[x].date)+', ';
 
                     }
 
