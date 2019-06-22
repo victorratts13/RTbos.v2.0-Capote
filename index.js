@@ -2,6 +2,7 @@ const request = require('request');
 const renko = require('technicalindicators').renko;
 const express = require('express');
 const app = express();
+const config = require('./config/config');
 const port = 8082;
 
 const par = 'USDT_BTC'
@@ -109,7 +110,7 @@ var objConf =
                 "timestamp": candleData.t
             }
 
-            var result = renko(Object.assign({}, renkoData, {brickSize : 10, useATR : false }));
+            var result = renko(Object.assign({}, renkoData, {brickSize : config.renko, useATR : false }));
             var renkoResult = {
                 "c": result.close,
                 "o": result.open,
