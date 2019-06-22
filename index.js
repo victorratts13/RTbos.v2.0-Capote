@@ -109,7 +109,7 @@ var objConf =
                 "timestamp": candleData.t
             }
 
-            var result = renko(Object.assign({}, renkoData, {brickSize : 5, useATR : false }));
+            var result = renko(Object.assign({}, renkoData, {brickSize : 10, useATR : false }));
             var renkoResult = {
                 "c": result.close,
                 "o": result.open,
