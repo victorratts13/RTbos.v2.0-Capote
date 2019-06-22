@@ -7,7 +7,8 @@ var configuration = {
     invest: '',
     lucro: '3',
     ma1: 1,
-    ma2: 5
+    ma2: 5,
+    renko: 10
 
 };
 
