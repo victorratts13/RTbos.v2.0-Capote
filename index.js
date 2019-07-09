@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 const config = require('./config/config');
 const port = 8082;
-
+app.use(express.static(__dirname + '/chart/'));
 const par = 'USDT_BTC'
 const uTime = parseInt(new Date().getTime() / 1000);
 
@@ -123,7 +123,9 @@ var objConf =
             res.send(renkoResult)
         })
     })
-
+    app.get('/', (req, res) => {
+        res.sendFile(__dirname+'/chart/index.html');
+    })
 app.listen(port, () => {
     console.log('Port -> '+port)
 })
