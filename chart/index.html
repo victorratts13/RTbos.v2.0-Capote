@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <title>Testes</title>
+    </head>
+    
+        <script type="text/javascript" src="charting_library/charting_library.min.js"></script>
+		<script type="text/javascript" src="datafeeds/udf/dist/polyfills.js"></script>
+		<script type="text/javascript" src="datafeeds/udf/dist/bundle.js"></script>
+
+		<body>
+		<script type="text/javascript">
+			function getParameterByName(name) {
+				name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+				var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+					results = regex.exec(location.search);
+				return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+			}
+			TradingView.onready(function()
+			{
+				var widget = window.tvWidget = new TradingView.widget({
+					// debug: true, // uncomment this line to see Library errors and warnings in the console
+					fullscreen: true,
+					symbol: 'USDT_BTC',
+					interval: '300',
+					theme: 'Dark',
+					container_id: "tv_chart_container",
+					//	BEWARE: no trailing slash is expected in feed URL
+					datafeed: new Datafeeds.UDFCompatibleDatafeed("http://localhost:5001"),
+					library_path: "charting_library/",
+					locale: getParameterByName('lang') || "pt",
+					drawings_access: {
+					type: 'black',
+					tools: [{ name: 'Regression Trend' }],
+					},
+					disabled_features: ["use_localstorage_for_settings"],
+					enabled_features: ["study_templates"],
+					charts_storage_url: 'http://saveload.tradingview.com',
+					charts_storage_api_version: "1.1",
+					client_id: 'tradingview.com',
+					user_id: 'public_user_id',
+					toolbar_bg: '#222222',
+					loading_screen: {
+						backgroundColor: '#222222',
+						foregroundColor: '#222222',
+					},
+					overrides: {
+						'mainSeriesProperties.style': 1,
+						'symbolWatermarkProperties.color': '#00BE96',
+						'paneProperties.background': '#000000',
+						'paneProperties.vertGridProperties.color': '#111',
+						'paneProperties.horzGridProperties.color': '#111',
+						'symbolWatermarkProperties.transparency': 99,
+						'scalesProperties.textColor': '#AAA',
+					},
+				});
+			});
+		</script>
+		<div id="tv_chart_container"></div>
+    </body>
+</html>
