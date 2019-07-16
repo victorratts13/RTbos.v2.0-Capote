@@ -105,7 +105,7 @@ const lucro = api.lucro; //porcentagem de lucro, caso esteja vazio o lucro esper
                                     console.log('USDT valor int ->'+USDT_buy)
 //======================================= funções de compra / venda =================================================
                                     function buy(){
-                                        poloniex.buy(par, price, buyVal, 1, 1, 0, (err, response) => {
+                                        poloniex.buy(par, price, buyVal, 0, 1, 0, (err, response) => {
                                             if(err){
                                                 console.log('algum erro ocorreu na compra -> '+err)
                                                 console.log('alternando configuraçoes de entrada...')
@@ -159,7 +159,7 @@ const lucro = api.lucro; //porcentagem de lucro, caso esteja vazio o lucro esper
                                     }
 
                                     function sell(){
-                                        poloniex.sell(par, price, sellVal, 1, 1, 0, (err, response) => {
+                                        poloniex.sell(par, price, sellVal, 0, 1, 0, (err, response) => {
                                             if(err){
                                                 console.log('algum erro ocorreu na venda -> '+err)
                                                 console.log('alternando configuraçoes de entrada...')
