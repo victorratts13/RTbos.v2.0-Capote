@@ -7,10 +7,11 @@ const fs = require('fs');
 const clearModule = require('clear-module');
 var cont = 0;
 var requisitionTime = 5000;
+var multiTimestamp = 212665;
 const apiKey = api.apiKey;
 const secret = api.apiSecret;
 
-const poloniex = new Poloniex(apiKey, secret, { nonce: () => new Date().getTime() * 2055 }, {socketTimeout: 60000});
+const poloniex = new Poloniex(apiKey, secret, { nonce: () => new Date().getTime() * multiTimestamp }, {socketTimeout: 60000});
 
 const SMA = require('technicalindicators').SMA;
 
