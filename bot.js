@@ -6,10 +6,11 @@ const request = require('request');
 const fs = require('fs');
 const clearModule = require('clear-module');
 var cont = 0;
+var requisitionTime = 5000;
 const apiKey = api.apiKey;
 const secret = api.apiSecret;
 
-const poloniex = new Poloniex(apiKey, secret, { nonce: () => new Date().getTime() * 212665 }, {socketTimeout: 60000});
+const poloniex = new Poloniex(apiKey, secret, { nonce: () => new Date().getTime() * 2055 }, {socketTimeout: 60000});
 
 const SMA = require('technicalindicators').SMA;
 
@@ -64,8 +65,8 @@ const lucro = api.lucro; //porcentagem de lucro, caso esteja vazio o lucro esper
                                     ma2 = SMA.calculate({period: api.ma2, values: renkoBrick.c})
                                     //console.log(ma1)
                                     //console.log(renkoBrick.c)
-                                    var brick01 = renkoBrick.c.slice(-1)[0];
-                                    var brick02 = renkoBrick.c.slice(-2)[0];
+                                    var lastBrick = renkoBrick.c.slice(-1)[0];
+                                    var afterBrick = renkoBrick.c.slice(-2)[0];
 
                                     var Ma01_val = ma1.slice(-1)[0];
                                     var Ma02_val = ma2.slice(-1)[0];
@@ -75,13 +76,12 @@ const lucro = api.lucro; //porcentagem de lucro, caso esteja vazio o lucro esper
                                     console.log('USDT saldo -> '+balance.USDT )
                                     console.log('Media Movel: '+api.ma1+' -> '+Ma01_val);
                                     console.log('Media Movel: '+api.ma2+' -> '+Ma02_val);
-                                    console.log('brock 01 -> '+brick01+'\n'+'brick 02 -> '+brick02+'\n')
 //====================================== cruzamento de medias em renko ============================================
                                 function cross(){//cross function 
-                                    if(brick01 > brick02){
+                                    if(Ma01_val > Ma02_val){
                                         return 1;
                                     }
-                                    if(brick01 < brick02){
+                                    if(Ma01_val < Ma02_val){
                                         return 2;
                                     }
                                     return 0;
@@ -103,9 +103,9 @@ const lucro = api.lucro; //porcentagem de lucro, caso esteja vazio o lucro esper
                                     console.log('valor de compra -> '+buyVal);
                                     console.log('valor de venda -> '+sellVal);
                                     console.log('USDT valor int ->'+USDT_buy)
-//======================================= funções de compra / venda =================================================
+//======================================= funções de compra / venda 01 =================================================
                                     function buy(){
-                                        poloniex.buy(par, price, buyVal, 0, 1, 0, (err, response) => {
+                                        poloniex.buy(par, price, buyVal, 1, 1, 0, (err, response) => {
                                             if(err){
                                                 console.log('algum erro ocorreu na compra -> '+err)
                                                 console.log('alternando configuraçoes de entrada...')
@@ -124,14 +124,8 @@ const lucro = api.lucro; //porcentagem de lucro, caso esteja vazio o lucro esper
                                                 })
                                                 poloniex.buy(par, price, buyVal, 1, 0, 0, (err, response) => {
                                                     if(err){
-                                                        console.log('atualizando FillOrKill Value')
-                                                        poloniex.buy(par, price, buyVal, 1, 1, 1, (err, response) => {
-                                                            if(err){
-                                                                console.log('impossivel enviar Compra');
-                                                            }else{
-                                                                console.log('compra -> '+response);
-                                                            }
-                                                        })
+                                                        console.log('erro ao efetuar a compra ->'+err);
+                                                        console.log('alterando configurações de entrada');
                                                     }else{
                                                         console.log(JSON.stringify(response))
                                                         var createTemp = "var lastOrder = {type: 'buy'}; module.exports = lastOrder;"
@@ -143,6 +137,22 @@ const lucro = api.lucro; //porcentagem de lucro, caso esteja vazio o lucro esper
                                                             }
                                                         })        
                                                     }
+                                                    poloniex.buy(par, price, buyVal, 1, 1, 1, (err, response) => {
+                                                        if(err){
+                                                            console.log('erro ao efetuar a compra ->'+err);
+                                                            console.log('alterando FillOrKill');
+                                                        }else{
+                                                            console.log(JSON.stringify(response))
+                                                            var createTemp = "var lastOrder = {type: 'buy'}; module.exports = lastOrder;"
+                                                                fs.writeFile('./var/tempFile.js', createTemp, (err) => {
+                                                                if(err){
+                                                                    console.log(err)
+                                                                }else{
+                                                                    console.log('criado arquivo temporario -> Buy')
+                                                                }
+                                                            })        
+                                                        }
+                                                    });
                                                 })
                                             }else{
                                                 console.log(JSON.stringify(response))
@@ -157,9 +167,9 @@ const lucro = api.lucro; //porcentagem de lucro, caso esteja vazio o lucro esper
                                             }
                                         })
                                     }
-
+//======================================= funções de compra / venda 02 =================================================
                                     function sell(){
-                                        poloniex.sell(par, price, sellVal, 0, 1, 0, (err, response) => {
+                                        poloniex.sell(par, price, sellVal, 1, 1, 0, (err, response) => {
                                             if(err){
                                                 console.log('algum erro ocorreu na venda -> '+err)
                                                 console.log('alternando configuraçoes de entrada...')
@@ -176,16 +186,9 @@ const lucro = api.lucro; //porcentagem de lucro, caso esteja vazio o lucro esper
                                                         console.log('criando log de erros')
                                                     }
                                                 })
-                                                poloniex.sell(par, price, buyVal, 1, 0, 0, (err, response) => {
+                                                poloniex.sell(par, price, sellVal, 1, 0, 0, (err, response) => {
                                                     if(err){
-                                                        console.log('atualizando FillOrKill Value')
-                                                        poloniex.buy(par, price, buyVal, 1, 1, 1, (err, response) => {
-                                                            if(err){
-                                                                console.log('impossivel enviar Venda');
-                                                            }else{
-                                                                console.log('Venda -> '+response);
-                                                            }
-                                                        })
+                                                        console.log('Alterando configurações de FillOrKill')
                                                     }else{
                                                         console.log(JSON.stringify(response))
                                                         var createTemp = "var lastOrder = {type: 'sell'}; module.exports = lastOrder;"
@@ -197,6 +200,21 @@ const lucro = api.lucro; //porcentagem de lucro, caso esteja vazio o lucro esper
                                                             }
                                                         })      
                                                     }
+                                                    poloniex.sell(par, price, sellVal, 1, 1, 1, (err, response) => {
+                                                        if(err){
+                                                            console.log('impossivel efetuar venda')
+                                                        }else{
+                                                            console.log(JSON.stringify(response))
+                                                            var createTemp = "var lastOrder = {type: 'sell'}; module.exports = lastOrder;"
+                                                                fs.writeFile('./var/tempFile.js', createTemp, (err) => {
+                                                                if(err){
+                                                                    console.log(err)
+                                                                }else{
+                                                                    console.log('criado arquivo temporario -> Sell')
+                                                                }
+                                                            })      
+                                                        }
+                                                    });
                                                 })
                                             }else{
                                                 console.log(JSON.stringify(response))
@@ -242,4 +260,4 @@ const lucro = api.lucro; //porcentagem de lucro, caso esteja vazio o lucro esper
 //################################################### Fim do Codigo ################################################
 //##################################################################################################################
 
-}, 10000);
+}, requisitionTime);
