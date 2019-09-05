@@ -157,3 +157,11 @@ Verifique o arquivo `./bot.js/` até a parte de compra/venda:
  
  - Consulte a Documentação da poloniex para saber mais detalhes de como configurar o FillOrKill:
 [api poloniex](https://docs.poloniex.com/#buy)
+
+>- Erro de requisição 422:
+
+- Gere uma nova chave de API e certifique-se de usar apenas a chave de API para um aplicativo.
+
+Observe também que os erros nonce podem ocorrer se você executar chamadas de API em paralelo ou logo após o outro. 
+O Poloniex exige que as chamadas de API subsequentes tenham um nonce cada vez maior. Quando duas chamadas de API são enviadas uma após a outra, pode acontecer que a segunda chamada de API (com maior número de caracteres) chegue ao servidor Poloniex antes da primeira chamada de API. Nesse caso, o Poloniex emitirá o erro 422 do nonce, uma vez que o nonce não está em ordem de aumento. 
+Para evitar esse problema, considere emitir as chamadas de API de forma síncrona (faça uma chamada apenas quando a resposta da chamada anterior tiver sido recebida).
